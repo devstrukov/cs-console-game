@@ -4,6 +4,8 @@ public interface IBoard
 {
     public void CreateBoard(IBoardBuilder builder);
     public string DrawBoard();
-    public string ShowStatistics(IPlayer player);
-    public void RedrawBoard(IPlayer player);
+    public string DrawCell(ICell cell);
+    public int GetHeight();
+    public int GetWidth();
+    public void SetCell(int x, int y, ICell cell);
 }

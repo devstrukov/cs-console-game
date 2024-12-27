@@ -32,7 +32,10 @@ public class BoardBuilder : IBoardBuilder
         {
             for (int j = 0; j < _width; j++)
             {
-                _board[i, j] = new Cell();
+                ICell cell = new Cell();
+                cell.SetState(CellState.Empty);
+                cell.SetCoordinates(new Tuple<int, int>(i, j));
+                _board[i, j] = cell;
             }
         }
     }
