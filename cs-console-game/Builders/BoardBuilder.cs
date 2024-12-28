@@ -22,12 +22,15 @@ public class BoardBuilder : IBoardBuilder
     public void SetPlayer()
     {
         Tuple<int, int> freeCellCoordinates = GetFreeCellCoordinates();
-        _board[freeCellCoordinates.Item1, freeCellCoordinates.Item2]
+        _board[freeCellCoordinates.Item2, freeCellCoordinates.Item1]
+        // _board[freeCellCoordinates.Item1, freeCellCoordinates.Item2]
             .SetState(CellState.Player);
     }
 
     public void BuildBoard()
     {
+        // _board = new Cell[_width, _height];
+        _board = new Cell[_height, _width];
         for (int i = 0; i < _height; i++)
         {
             for (int j = 0; j < _width; j++)
@@ -64,7 +67,8 @@ public class BoardBuilder : IBoardBuilder
         while (totalItems < itemsToCreate)
         {
             Tuple<int, int> randomCell = GetFreeCellCoordinates();
-            ICell cell = _board[randomCell.Item1, randomCell.Item2];
+            ICell cell = _board[randomCell.Item2, randomCell.Item1];
+            // ICell cell = _board[randomCell.Item1, randomCell.Item2];
             cell.SetState(cellType);
             totalItems++;
         }
@@ -88,7 +92,8 @@ public class BoardBuilder : IBoardBuilder
             int x = rnd.Next(0, _width);
             int y = rnd.Next(0, _height);
             
-            ICell cell = _board[x, y];
+            ICell cell = _board[y, x];
+            // ICell cell = _board[x, y];
             
             if (cell.CanBeOccupied()) return Tuple.Create(x, y);
         }

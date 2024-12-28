@@ -22,6 +22,7 @@ public class Board : IBoard
                 ICell cell = _boardData[i, j];
                 board += DrawCell(cell);
             }
+            board += "\n";
         }
         
         return board;
