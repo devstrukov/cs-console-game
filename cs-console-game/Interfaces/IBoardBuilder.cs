@@ -9,4 +9,5 @@ public interface IBoardBuilder
     public void SetPlayer();
     public void BuildBoard();
     public ICell[,] GetBoardData();
+    public ICell GetPlayerCell();
 }

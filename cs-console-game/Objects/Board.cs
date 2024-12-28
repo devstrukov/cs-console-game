@@ -6,11 +6,17 @@ namespace cs_console_game.Objects;
 public class Board : IBoard
 {
     private ICell[,] _boardData;
+    private ICell _playerCell;
     public void CreateBoard(IBoardBuilder builder)
     {
         _boardData = builder.GetBoardData();
+        _playerCell = builder.GetPlayerCell();
     }
 
+    public ICell GetPlayerCell()
+    {
+        return _playerCell;
+    }
     public string DrawBoard()
     {
         string board = "";
@@ -58,5 +64,10 @@ public class Board : IBoard
     public void SetCell(int x, int y, ICell cell)
     {
         _boardData[x, y] = cell;
+    }
+
+    public ICell GetCell(int x, int y)
+    {
+        return _boardData[x, y];
     }
 }

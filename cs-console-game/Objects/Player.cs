@@ -13,6 +13,7 @@ public class Player : IPlayer
     public void SetBoard(IBoard board)
     {
         _board = board;
+        _cell = board.GetPlayerCell();
     }
 
     public ICell GetCurrentCell()
@@ -40,18 +41,18 @@ public class Player : IPlayer
         return _steps;
     }
 
-    public bool CanMove(Direction direction)
+    public bool CanMove(Direction direction, Tuple<int, int> coordinates)
     {
         switch (direction)
         {
             case Direction.Forward:
-                return _cell.GetCoordinates().Item1 > 0;
+                return coordinates.Item1 >= 0;
             case Direction.Backward:
-                return _cell.GetCoordinates().Item1 < _board.GetHeight();
+                return coordinates.Item1 < _board.GetHeight();
             case Direction.Left:
-                return _cell.GetCoordinates().Item2 > 0;
+                return coordinates.Item2 >= 0;
             case Direction.Right:
-                return _cell.GetCoordinates().Item2 < _board.GetWidth();
+                return coordinates.Item2 < _board.GetWidth();
             default:
                 return false;
         }
@@ -63,9 +64,9 @@ public class Player : IPlayer
         
         switch (direction)
         {
-            case Direction.Forward:
-                return new Tuple<int, int>(coordinates.Item1 + 1, coordinates.Item2);
             case Direction.Backward:
+                return new Tuple<int, int>(coordinates.Item1 + 1, coordinates.Item2);
+            case Direction.Forward:
                 return new Tuple<int, int>(coordinates.Item1 - 1, coordinates.Item2);
             case Direction.Left:
                 return new Tuple<int, int>(coordinates.Item1, coordinates.Item2 - 1);
@@ -78,18 +79,28 @@ public class Player : IPlayer
 
     public void Move(Direction direction)
     {
-        if (!CanMove(direction)) throw new PlayerCantMoveException("Can't move this direction");
-        
         IncrementSteps();
-        
         ICell cell = GetCurrentCell();
+        Tuple<int, int> newCoordinates = GetNewCoordinates(cell, direction);
+        if (!CanMove(direction, newCoordinates)) ShowBlockError();
+        
+        ICell nextCell = _board.GetCell(newCoordinates.Item1, newCoordinates.Item2);
+        
+        if (nextCell.GetState() == CellState.Wall) ShowBlockError();
+        
         Tuple<int, int> coordinates = cell.GetCoordinates();
         cell.SetState(CellState.Empty);
         _board.SetCell(coordinates.Item1, coordinates.Item2, cell);
-        
-        Tuple<int, int> newCoordinates = GetNewCoordinates(cell, direction);
         ICell playerCell = new Cell();
         playerCell.SetState(CellState.Player);
         _board.SetCell(newCoordinates.Item1, newCoordinates.Item2, playerCell);
+        _cell.SetCoordinates(newCoordinates);
+        
+        if (nextCell.GetState() == CellState.Treasure) IncrementTreasures();
+    }
+
+    private void ShowBlockError()
+    {
+        throw new PlayerCantMoveException("Игрок не может двигаться в этом направлении");
     }
 }
