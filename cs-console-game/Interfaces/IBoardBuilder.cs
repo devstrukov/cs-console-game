@@ -8,6 +8,7 @@ public interface IBoardBuilder
     public void SetRandomWalls(int min, int max);
     public void SetPlayer();
     public void BuildBoard();
+    public int GetTreasuresCount();
     public ICell[,] GetBoardData();
     public ICell GetPlayerCell();
 }

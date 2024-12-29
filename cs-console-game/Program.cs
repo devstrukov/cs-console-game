@@ -46,6 +46,12 @@ class Program
                     MakeStep(Direction.Right);
                     break;
             }
+
+            if (_board.GetTreasuresCount() == 0)
+            {
+                exit = true;
+                Console.WriteLine("Поздравляем с победой!");
+            }
         }
     }
 
@@ -76,5 +82,6 @@ class Program
     {
         Console.WriteLine("Сделано шагов: " + _player.GetSteps());
         Console.WriteLine("Собрано сокровищ: " + _player.GetTreasures());
+        Console.WriteLine("Осталось собрать: " + _board.GetTreasuresCount());
     }
 }

@@ -7,7 +7,10 @@ public interface IBoard
     public string DrawCell(ICell cell);
     public int GetHeight();
     public int GetWidth();
+    public int GetTreasuresCount();
     public ICell GetPlayerCell();
     public void SetCell(int x, int y, ICell cell);
+    public void DecrementTreasures();
     public ICell GetCell(int x, int y);
+    public ICell[,] GetBoardData();
 }

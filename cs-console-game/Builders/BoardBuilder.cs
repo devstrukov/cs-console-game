@@ -1,4 +1,5 @@
 using cs_console_game.Enums;
+using cs_console_game.Helpers;
 using cs_console_game.Interfaces;
 using cs_console_game.Objects;
 
@@ -10,6 +11,7 @@ public class BoardBuilder : IBoardBuilder
     private int _height;
     private ICell[,] _board;
     private ICell _playerCell;
+    private int _treasureCount;
     
     public void SetWidth(int width)
     {
@@ -20,10 +22,15 @@ public class BoardBuilder : IBoardBuilder
         _height = height;
     }
 
+    public int GetTreasuresCount()
+    {
+        return _treasureCount;
+    }
+
     public void SetPlayer()
     {
-        Tuple<int, int> freeCellCoordinates = GetFreeCellCoordinates();
-        ICell cell = _board[freeCellCoordinates.Item2, freeCellCoordinates.Item1];
+        Tuple<int, int> freeCellCoordinates = CellsHelper.GetFreeCellCoordinates(_board);
+        ICell cell = _board[freeCellCoordinates.Item1, freeCellCoordinates.Item2];
         cell.SetState(CellState.Player);
         _playerCell = cell;
     }
@@ -69,10 +76,15 @@ public class BoardBuilder : IBoardBuilder
             itemsToCreate = CanCreateSpecificCellsCount();
         }
 
+        if (cellType == CellState.Treasure)
+        {
+            _treasureCount = itemsToCreate;
+        }
+
         while (totalItems < itemsToCreate)
         {
-            Tuple<int, int> randomCell = GetFreeCellCoordinates();
-            ICell cell = _board[randomCell.Item2, randomCell.Item1];
+            Tuple<int, int> randomCell = CellsHelper.GetFreeCellCoordinates(_board);
+            ICell cell = _board[randomCell.Item1, randomCell.Item2];
             cell.SetState(cellType);
             totalItems++;
         }
@@ -86,20 +98,6 @@ public class BoardBuilder : IBoardBuilder
     private int CanCreateSpecificCellsCount()
     {
         return GetTotalCells() / 3;
-    }
-
-    private Tuple<int, int> GetFreeCellCoordinates()
-    {
-        while (true)
-        {
-            Random rnd = new Random();
-            int x = rnd.Next(0, _width);
-            int y = rnd.Next(0, _height);
-            
-            ICell cell = _board[y, x];
-            
-            if (cell.CanBeOccupied()) return Tuple.Create(x, y);
-        }
     }
 
     public ICell[,] GetBoardData()

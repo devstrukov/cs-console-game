@@ -1,5 +1,6 @@
 using cs_console_game.Enums;
 using cs_console_game.Exceptions;
+using cs_console_game.Helpers;
 using cs_console_game.Interfaces;
 
 namespace cs_console_game.Objects;
@@ -80,6 +81,7 @@ public class Player : IPlayer
     public void Move(Direction direction)
     {
         IncrementSteps();
+        
         ICell cell = GetCurrentCell();
         Tuple<int, int> newCoordinates = GetNewCoordinates(cell, direction);
         if (!CanMove(direction, newCoordinates)) ShowBlockError();
@@ -95,8 +97,20 @@ public class Player : IPlayer
         playerCell.SetState(CellState.Player);
         _board.SetCell(newCoordinates.Item1, newCoordinates.Item2, playerCell);
         _cell.SetCoordinates(newCoordinates);
-        
-        if (nextCell.GetState() == CellState.Treasure) IncrementTreasures();
+
+        if (nextCell.GetState() == CellState.Treasure)
+        {
+            IncrementTreasures();
+            _board.DecrementTreasures();
+        }
+
+        if (_steps % 5 == 0)
+        {
+            ICell treasureCell = new Cell();
+            treasureCell.SetState(CellState.Treasure);
+            Tuple<int, int> randomCoordinates = CellsHelper.GetFreeCellCoordinates(_board.GetBoardData());
+            _board.SetCell(randomCoordinates.Item1, randomCoordinates.Item2, treasureCell);
+        }
     }
 
     private void ShowBlockError()
